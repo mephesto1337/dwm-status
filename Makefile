@@ -1,12 +1,12 @@
 CC=gcc
 CPPFLAGS=-D_DEFAULT_SOURCE
-CFLAGS=-W -Wall -Wextra -Wshadow
+CFLAGS=-W -Wall -Wextra -Wshadow -std=c99
 
 LD=gcc
 LDFLAGS=
 LIBS=-lXss -lX11
 
-SRC=main.c
+SRC=main.c arp.c
 OBJ=$(SRC:%.c=%.o)
 EXTRA_LIB=desktop-utils/libdesktop-utils.a
 BIN=dwm-status

@@ -8,12 +8,12 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "arp.h"
 #include "config.h"
 #include "desktop-utils/desktop-utils.h"
 #include "desktop-utils/macros.h"
 
-#define DEFAULT_INACTIVITY      "10m"
-#define BUFFER_SIZE             256
+#define BUFFER_SIZE             512
 
 enum battery_state_e {
     CHARGING = '+',
@@ -34,6 +34,7 @@ void set_status(Display *dpy, const char *str);
 int main(int argc, char *const argv[], char *const envp[]) {
     Display *dpy = NULL;
     char datetime[BUFFER_SIZE];
+    char arp_status[BUFFER_SIZE];
     struct battery_status_s status;
     char dwm_status[BUFFER_SIZE];
     int ret = EXIT_SUCCESS;
@@ -46,9 +47,10 @@ int main(int argc, char *const argv[], char *const envp[]) {
     CHK_NULL(dpy = XOpenDisplay(NULL));
 
     while ( true ) {
-        CHK_NEG(get_battery_status(&status));
-        CHK_NEG(get_datetime(datetime, sizeof(datetime)));
-        snprintf(dwm_status, sizeof(dwm_status), "BAT:%c%5.1f%% | %s", status.state, status.level, datetime);
+        CHK_FALSE(get_battery_status(&status));
+        CHK_FALSE(get_datetime(datetime, sizeof(datetime)));
+        CHK_FALSE(check_arp_table(arp_status, sizeof(arp_status)));
+        snprintf(dwm_status, sizeof(dwm_status), "%s | BAT:%c%5.1f%% | %s", arp_status, status.state, status.level, datetime);
         set_status(dpy, dwm_status);
         sleep(1);
     }

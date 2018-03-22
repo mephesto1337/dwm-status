@@ -9,6 +9,8 @@
 #include <unistd.h>
 
 #include "arp.h"
+#include "volume.h"
+#include "temperature.h"
 #include "config.h"
 #include "desktop-utils/desktop-utils.h"
 #include "desktop-utils/macros.h"
@@ -37,6 +39,8 @@ int main(int argc, char *const argv[], char *const envp[]) {
     char arp_status[BUFFER_SIZE];
     struct battery_status_s status;
     char dwm_status[BUFFER_SIZE];
+    long vol;
+    double temp;
     int ret = EXIT_SUCCESS;
 
 	UNUSED(argc);
@@ -50,7 +54,9 @@ int main(int argc, char *const argv[], char *const envp[]) {
         CHK_FALSE(get_battery_status(&status));
         CHK_FALSE(get_datetime(datetime, sizeof(datetime)));
         CHK_FALSE(check_arp_table(arp_status, sizeof(arp_status)));
-        snprintf(dwm_status, sizeof(dwm_status), "%s | BAT:%c%5.1f%% | %s", arp_status, status.state, status.level, datetime);
+        CHK_FALSE(get_volume(&vol));
+        CHK_FALSE(get_temperature(&temp));
+        snprintf(dwm_status, sizeof(dwm_status), "%s | vol:%02ld | temp:%.1f°C | BAT:%c%5.1f%% | %s", arp_status, vol, temp, status.state, status.level, datetime);
         set_status(dpy, dwm_status);
         sleep(1);
     }

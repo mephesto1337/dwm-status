@@ -4,9 +4,9 @@ CFLAGS=-W -Wall -Wextra -Wshadow -std=c99
 
 LD=gcc
 LDFLAGS=
-LIBS=-lXss -lX11
+LIBS=-lXss -lX11 -lasound
 
-SRC=main.c arp.c
+SRC=$(wildcard *.c)
 OBJ=$(SRC:%.c=%.o)
 EXTRA_LIB=desktop-utils/libdesktop-utils.a
 BIN=dwm-status

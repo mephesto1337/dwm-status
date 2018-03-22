@@ -56,7 +56,7 @@ int main(int argc, char *const argv[], char *const envp[]) {
         CHK_FALSE(check_arp_table(arp_status, sizeof(arp_status)));
         CHK_FALSE(get_volume(&vol));
         CHK_FALSE(get_temperature(&temp));
-        snprintf(dwm_status, sizeof(dwm_status), "%s | vol:%02ld | temp:%.1f°C | BAT:%c%5.1f%% | %s", arp_status, vol, temp, status.state, status.level, datetime);
+        snprintf(dwm_status, sizeof(dwm_status), "%s | vol:%02ld%% | temp:%.1f°C | BAT:%c%5.1f%% | %s", arp_status, vol, temp, status.state, status.level, datetime);
         set_status(dpy, dwm_status);
         sleep(1);
     }

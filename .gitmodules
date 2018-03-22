@@ -1,0 +1,3 @@
+[submodule "desktop-utils"]
+	path = desktop-utils
+	url = https://github.com/mephesto1337/desktop-utils.git

@@ -6,8 +6,9 @@ LD=gcc
 LDFLAGS=
 LIBS=-lXss -lX11 -lasound
 
-SRC=$(wildcard *.c)
-OBJ=$(SRC:%.c=%.o)
+HDR=$(wildcard src/*.h)
+SRC=$(wildcard src/*.c)
+OBJ=$(SRC:src/%.c=obj/%.o)
 EXTRA_LIB=desktop-utils/libdesktop-utils.a
 BIN=dwm-status
 
@@ -21,6 +22,7 @@ else
 endif
 
 .PHONY : all clean install uninstall
+.SECONDARY : $(OBJ)
 
 
 all : $(BIN)
@@ -28,7 +30,7 @@ all : $(BIN)
 $(BIN) : $(OBJ) $(EXTRA_LIB)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-%.o : %.c $(HDR)
+obj/%.o : src/%.c $(HDR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
 
 $(EXTRA_LIB) :

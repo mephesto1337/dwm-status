@@ -45,15 +45,15 @@ bool get_battery_status(struct battery_status_s *status) {
         }
     }
 
-    CHK_NULL(f = fopen("/sys/class/power_supply/BAT0/energy_now", "r"));
+    CHK_NULL(f = fopen(files->now, "r"));
     CHK(fscanf(f, "%lu", &energy_now), != 1);
     CHK_NEG(fclose(f));
 
-    CHK_NULL(f = fopen("/sys/class/power_supply/BAT0/energy_full", "r"));
+    CHK_NULL(f = fopen(files->full, "r"));
     CHK(fscanf(f, "%lu", &energy_full), != 1);
     CHK_NEG(fclose(f));
 
-    CHK_NULL(f = fopen("/sys/class/power_supply/BAT0/status", "r"));
+    CHK_NULL(f = fopen(files->status, "r"));
     CHK(fscanf(f, "%" STRINGIFY(sizeof(str_state)) "s", str_state), != 1);
     CHK_NEG(fclose(f));
     if ( strcasecmp(str_state, STRINGIFY(DISCHARGING)) == 0 ) {
@@ -73,5 +73,3 @@ bool get_battery_status(struct battery_status_s *status) {
     SAFE_FREE(fclose, f);
     return false;
 }
-
-

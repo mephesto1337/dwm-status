@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 #include "arp.h"
+#include "battery.h"
 #include "volume.h"
 #include "temperature.h"
 #include "config.h"
@@ -16,17 +17,6 @@
 #include "desktop-utils/macros.h"
 
 #define BUFFER_SIZE             512
-
-enum battery_state_e {
-    CHARGING = '+',
-    DISCHARGING = '-',
-    FULL = ' ',
-    UNKNOWN = '?'
-};
-struct battery_status_s {
-    enum battery_state_e state;
-    float level; 
-};
 
 bool get_battery_status(struct battery_status_s *status);
 bool get_datetime(char *dst, size_t len);
@@ -65,41 +55,6 @@ int main(int argc, char *const argv[], char *const envp[]) {
     fail:
     SAFE_FREE(XCloseDisplay, dpy);
     return ret;
-}
-
-bool get_battery_status(struct battery_status_s *status) {
-    FILE *f = NULL;
-    unsigned long energy_now;
-    unsigned long energy_full;
-    char str_state[BUFFER_SIZE];
-
-    CHK_NULL(f = fopen("/sys/class/power_supply/BAT0/energy_now", "r"));
-    CHK(fscanf(f, "%lu", &energy_now), != 1);
-    CHK_NEG(fclose(f));
-
-    CHK_NULL(f = fopen("/sys/class/power_supply/BAT0/energy_full", "r"));
-    CHK(fscanf(f, "%lu", &energy_full), != 1);
-    CHK_NEG(fclose(f));
-
-    CHK_NULL(f = fopen("/sys/class/power_supply/BAT0/status", "r"));
-    CHK(fscanf(f, "%" STRINGIFY(BUFFER_SIZE) "s", str_state), != 1);
-    CHK_NEG(fclose(f));
-    if ( strcasecmp(str_state, STRINGIFY(DISCHARGING)) == 0 ) {
-        status->state = DISCHARGING;
-    } else if ( strcasecmp(str_state, STRINGIFY(CHARGING)) == 0 ) {
-        status->state = CHARGING;
-    } else if ( strcasecmp(str_state, STRINGIFY(FULL)) == 0 ) {
-        status->state = FULL;
-    } else {
-        status->state = UNKNOWN;
-    }
-    status->level = ((float)energy_now * 100.0f) / (float)energy_full;
-
-    return true;
-
-    fail:
-    SAFE_FREE(fclose, f);
-    return false;
 }
 
 bool get_datetime(char *dst, size_t len) {

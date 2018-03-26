@@ -1,5 +1,5 @@
 CC=gcc
-CPPFLAGS=-D_DEFAULT_SOURCE -I..
+CPPFLAGS=-D_DEFAULT_SOURCE -I.
 CFLAGS=-W -Wall -Wextra -Wshadow -std=c99
 
 LD=gcc
